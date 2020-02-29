@@ -31,7 +31,8 @@ async def download_file(url, dest):
 async def setup_learner():
     await download_file(export_file_url, path / export_file_name)
     try:
-        learn = torch.load(path/export_file_name)
+        learn = torch.load(path/export_file_name, map_location=torch.device('cpu'))
+        learn.dls.device = 'cpu'
         return learn
     except RuntimeError as e:
         if len(e.args) > 0 and 'CPU-only machine' in e.args[0]:
@@ -58,9 +59,10 @@ async def homepage(request):
 async def analyze(request):
   img_data = await request.form()
   img_bytes = await (img_data['file'].read())
-  pred = learn.predict(BytesIO(img_bytes))[0]
+  img_np = np.array(Image.open(BytesIO(img_bytes)))
+  pred = learn.predict(BytesIO(img_bytes))
   return JSONResponse({
-      'results': str(pred)
+      'result': str(pred[0])
   })
 
 
