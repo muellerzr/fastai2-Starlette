@@ -1,12 +1,21 @@
+# uvicorn imports
 import aiohttp
 import asyncio
 import uvicorn
-from fastai2.vision.all import *
-from io import BytesIO
+
+# starlette imports
 from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
+
+# fastai
+from fastai.vision.all import *
+
+# Any custom imports should be done here, for example:
+# from lib.utilities import *
+# lib.utilities contains custom functions used during training that pickle is expecting
+
 
 export_file_url = YOUR_GDRIVE_LINK_HERE
 export_file_name = 'export.pkl'
@@ -67,5 +76,4 @@ async def analyze(request):
 
 
 if __name__ == '__main__':
-    if 'serve' in sys.argv:
-        uvicorn.run(app=app, host='0.0.0.0', port=5000, log_level="info")
+    uvicorn.run(app=app, host='0.0.0.0', port=5000, log_level="info")
